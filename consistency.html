@@ -3,109 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Geometry of Habits</title>
+    <title>The Architecture of Habits</title>
     <style>
         :root {
-            --bg: #fcfbf9; --surface: #ffffff; --text-main: #2b2a28; --text-muted: #84827e;
-            --border: #e6e5e1; --consistency: #446950; --intensity: #c26d53; 
-            --decay: #944040; --zero: #c9c8c5; --accent: #eef2ef;
+            --bg: #f9f8f6;
+            --surface: #ffffff;
+            --text-main: #1c1c1c;
+            --text-muted: #706f6c;
+            --border: #e6e5e1;
+            --consistency: #3b5943; 
+            --intensity: #c96f53;   
+            --decay: #9e2a2b;       
+            --zero: #d1d0cd;        
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text-main); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 1.5rem; -webkit-font-smoothing: antialiased; }
-        .wrapper { width: 100%; max-width: 780px; }
-        
-        header { text-align: center; margin-bottom: 1.5rem; }
-        h1 { font-size: 1.6rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.3rem; }
-        p.subtitle { font-size: 0.9rem; color: var(--text-muted); font-weight: 300; }
 
-        /* Controls UI */
-        .controls-card { background: var(--surface); border-radius: 16px; padding: 1.2rem 1.5rem; border: 1px solid var(--border); box-shadow: 0 2px 15px rgba(0,0,0,0.02); margin-bottom: 1.2rem; display: flex; flex-direction: column; gap: 1.5rem; }
-        .row-space-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .wrapper { width: 100%; max-width: 800px; }
         
-        .pill-group { display: flex; background: rgba(0,0,0,0.03); padding: 4px; border-radius: 99px; }
-        .pill-group button { background: transparent; border: none; padding: 0.4rem 1rem; font-size: 0.8rem; font-weight: 500; color: var(--text-muted); border-radius: 99px; cursor: pointer; transition: all 0.2s; }
-        .pill-group button.active { background: var(--surface); color: var(--text-main); box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+        header { text-align: center; margin-bottom: 2rem; }
+        h1 { font-size: 1.8rem; font-weight: 300; letter-spacing: -0.03em; margin-bottom: 0.5rem; }
+        p.subtitle { font-size: 0.95rem; color: var(--text-muted); font-weight: 300; }
+
+        /* Premium Nav Tabs */
+        .tabs { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .tabs button {
+            background: transparent; border: 1px solid transparent;
+            padding: 0.5rem 1.25rem; font-size: 0.9rem; font-weight: 400;
+            color: var(--text-muted); border-radius: 99px; cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .tabs button.active { background: var(--surface); color: var(--text-main); border-color: var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+
+        /* Controls Section */
+        .controls {
+            background: var(--surface); padding: 1.5rem; border-radius: 16px;
+            border: 1px solid var(--border); box-shadow: 0 4px 24px rgba(0, 0, 0, 0.015);
+            margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem;
+        }
+
+        .controls-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        
+        .scale-selector { display: flex; background: rgba(0,0,0,0.03); padding: 4px; border-radius: 8px; }
+        .scale-selector button {
+            background: transparent; border: none; padding: 0.4rem 0.8rem; font-size: 0.8rem;
+            color: var(--text-muted); border-radius: 6px; cursor: pointer; transition: 0.2s;
+        }
+        .scale-selector button.active { background: var(--surface); color: var(--text-main); box-shadow: 0 1px 4px rgba(0,0,0,0.04); font-weight: 500; }
 
         /* Toggle Switch */
-        .toggle-container { display: flex; align-items: center; gap: 0.75rem; font-size: 0.85rem; font-weight: 500; color: var(--text-main); cursor: pointer; }
-        .switch { position: relative; width: 40px; height: 22px; background-color: var(--border); border-radius: 22px; transition: 0.3s; }
-        .switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; background-color: white; border-radius: 50%; transition: 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        input:checked + .switch { background-color: var(--consistency); }
-        input:checked + .switch::after { transform: translateX(18px); }
+        .toggle-wrapper { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-size: 0.85rem; color: var(--text-main); }
+        .toggle { width: 36px; height: 20px; background: var(--border); border-radius: 20px; position: relative; transition: 0.3s; }
+        .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: white; border-radius: 50%; transition: 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
         input[type="checkbox"] { display: none; }
+        input[type="checkbox"]:checked + .toggle { background: var(--consistency); }
+        input[type="checkbox"]:checked + .toggle::after { transform: translateX(16px); }
 
-        /* Slider */
-        .slider-row { display: flex; align-items: center; gap: 1rem; font-size: 0.85rem; font-weight: 500; }
-        input[type=range] { -webkit-appearance: none; flex-grow: 1; height: 4px; background: var(--border); border-radius: 4px; cursor: pointer; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--consistency); cursor: pointer; margin-top: -6px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); transition: transform 0.1s; }
-        input[type=range]::-webkit-slider-thumb:active { transform: scale(1.2); }
-
-        /* Canvas & Chart */
-        .canvas-card { background: var(--surface); border-radius: 16px; padding: 1.5rem; border: 1px solid var(--border); box-shadow: 0 4px 24px rgba(0,0,0,0.015); }
-        .canvas-container { position: relative; width: 100%; height: 320px; }
+        /* Timeline Slider */
+        .timeline-box { display: flex; flex-direction: column; gap: 0.5rem; }
+        .timeline-header { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 500; }
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: var(--consistency); cursor: pointer; margin-top: -7px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: transform 0.1s; }
+        input[type=range]::-webkit-slider-thumb:active { transform: scale(1.15); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: var(--border); border-radius: 4px; }
+        
+        .canvas-container { position: relative; width: 100%; height: 320px; margin-bottom: 1rem; }
         canvas { width: 100%; height: 100%; }
 
-        .legend { display: flex; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem; }
-        .legend-item { display: flex; flex-direction: column; gap: 0.2rem; width: 22%; }
-        .legend-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; display: flex; align-items: center; gap: 5px; }
+        .legend { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+        .legend-item { display: flex; flex-direction: column; gap: 0.2rem; }
+        .legend-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
         .legend-label::before { content: ''; width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
-        .c-con { color: var(--consistency); } .c-con::before { background: var(--consistency); }
-        .c-int { color: var(--intensity); } .c-int::before { background: var(--intensity); }
-        .c-dec { color: var(--decay); } .c-dec::before { background: var(--decay); }
-        .c-bas { color: var(--text-muted); } .c-bas::before { background: var(--zero); }
-        .legend-desc { font-size: 0.7rem; color: var(--text-muted); line-height: 1.3; }
-
-        #lesson-box { text-align: center; font-size: 0.95rem; line-height: 1.5; color: var(--text-main); font-weight: 400; padding: 1.5rem 1rem 0; min-height: 60px; font-style: italic; }
-        .scale-badge { background: var(--accent); color: var(--consistency); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.5rem; display: inline-block; }
+        .con-label { color: var(--consistency); } .con-label::before { background: var(--consistency); }
+        .int-label { color: var(--intensity); } .int-label::before { background: var(--intensity); }
+        .base-label { color: var(--text-muted); } .base-label::before { background: var(--zero); }
+        .dec-label { color: var(--decay); } .dec-label::before { background: var(--decay); }
+        .legend-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; font-weight: 300; }
+        
+        #lesson-box { font-size: 0.95rem; line-height: 1.6; color: var(--text-main); font-weight: 300; text-align: center; padding: 1rem; font-style: italic; }
     </style>
 </head>
 <body>
 
     <div class="wrapper">
         <header>
-            <h1>The Geometry of Habits</h1>
-            <p class="subtitle">See how time and setbacks change the game.</p>
+            <h1>The Architecture of Habits</h1>
+            <p class="subtitle">Observe how choices unfold across different scales of time.</p>
         </header>
 
-        <div class="controls-card">
-            <div class="row-space-between">
-                <div class="pill-group" id="tabs">
-                    <button class="active" onclick="setTab('health')">Health</button>
-                    <button onclick="setTab('money')">Wealth</button>
-                    <button onclick="setTab('learning')">Mind</button>
-                    <button onclick="setTab('relationships')">Bonds</button>
+        <div class="tabs" id="domain-tabs">
+            <button class="active" data-tab="health">Health</button>
+            <button data-tab="money">Wealth</button>
+            <button data-tab="learning">Mind</button>
+            <button data-tab="relationships">Bonds</button>
+        </div>
+
+        <div class="controls">
+            <div class="controls-row">
+                <div class="scale-selector" id="scale-tabs">
+                    <button class="active" data-scale="1">1 Year</button>
+                    <button data-scale="10">10 Years</button>
+                    <button data-scale="30">30 Years</button>
+                    <button data-scale="50">50 Years</button>
                 </div>
                 
-                <label class="toggle-container">
-                    <input type="checkbox" id="realLifeToggle" onchange="drawChart()">
-                    <div class="switch"></div>
-                    Include Real-Life Setbacks
+                <label class="toggle-wrapper">
+                    <input type="checkbox" id="skip-toggle">
+                    <div class="toggle"></div>
+                    Include Real-Life Skips & Emergencies
                 </label>
             </div>
 
-            <div class="row-space-between">
-                <div class="pill-group" id="scales">
-                    <button onclick="setScale(1)">1 Year</button>
-                    <button onclick="setScale(10)">10 Years</button>
-                    <button class="active" onclick="setScale(50)">50 Years</button>
+            <div class="timeline-box">
+                <div class="timeline-header">
+                    <span>Timeline Progression</span>
+                    <span id="year-label" style="color: var(--consistency);">Year 1.0</span>
                 </div>
-                
-                <div class="slider-row" style="flex-grow: 1; max-width: 300px;">
-                    <span>Time: <span id="timeLabel">50</span>y</span>
-                    <input type="range" id="timeSlider" min="0" max="50" step="0.1" value="50" oninput="drawChart()">
-                </div>
+                <input type="range" id="timeline-slider" min="0" max="1" step="0.01" value="1">
             </div>
-        </div>
 
-        <div class="canvas-card">
-            <div class="canvas-container"><canvas id="chart"></canvas></div>
+            <div class="canvas-container">
+                <canvas id="horizonChart"></canvas>
+            </div>
             
             <div class="legend">
-                <div class="legend-item"><span class="legend-label c-con">Consistency</span><span class="legend-desc">Small daily steps. Recovers from drops.</span></div>
-                <div class="legend-item"><span class="legend-label c-int">Intensity</span><span class="legend-desc">Massive bursts, quick fade.</span></div>
-                <div class="legend-item"><span class="legend-label c-bas">Baseline</span><span class="legend-desc">Doing absolutely nothing.</span></div>
-                <div class="legend-item"><span class="legend-label c-dec">Active Decay</span><span class="legend-desc">Bad habits permanently erode.</span></div>
+                <div class="legend-item"><span class="legend-label con-label">Consistency</span><span class="legend-desc">Compounding daily effort.</span></div>
+                <div class="legend-item"><span class="legend-label int-label">Intensity</span><span class="legend-desc">Massive bursts, quick burnout.</span></div>
+                <div class="legend-item"><span class="legend-label base-label">Baseline</span><span class="legend-desc">Doing absolutely nothing.</span></div>
+                <div class="legend-item"><span class="legend-label dec-label">Active Decay</span><span class="legend-desc">Neglect eroding foundations.</span></div>
             </div>
         </div>
 
@@ -113,95 +151,117 @@
     </div>
 
     <script>
-        // Mathematical Engine Configuration
         const config = {
-            baseGrowth: 2.5,
-            compoundRate: 1.13,   // Exponential compounding factor
-            spikeHeight: 8.0,     // How high an "Intensity" spike goes
-            spikeFade: 6.0,       // How fast an "Intensity" spike drops back to zero
-            decayRate: 1.8,       // How fast doing nothing/bad habits pull you down
-            setbackSeverity: 0.35, // A setback wipes out 35% of current progress
-            recoveryRate: 2.5,    // How fast consistency heals a setback
-            // Predetermined timeline events (in years)
-            setbacks: [0.3, 0.8, 2.2, 4.5, 7.1, 11, 15, 21, 28, 35, 42],
-            spikes: [0.1, 0.7, 1.8, 3.5, 6, 9.5, 14, 20, 27, 36, 45]
-        };
-
-        const lessons = {
-            '1': "In the micro view (1 Year), massive spikes of Intensity look amazing, while Consistency feels painfully slow. Setbacks feel like the end of the world.",
-            '10': "Zooming out to a decade, Consistency crosses Intensity. The exponential curve begins, and Setbacks are quickly healed by daily habits.",
-            '50': "Over a lifetime, Consistency's compounding math crushes everything else. Early spikes disappear into flatlines, and Setbacks become tiny blips on the journey upward."
-        };
-
-        let activeTab = 'health';
-        let maxScale = 50;
-        
-        const canvas = document.getElementById('chart');
-        const ctx = canvas.getContext('2d');
-        const slider = document.getElementById('timeSlider');
-        const timeLabel = document.getElementById('timeLabel');
-        const toggle = document.getElementById('realLifeToggle');
-        
-        // Universal function to calculate the score at any given time (y)
-        function getScore(y, mode, useSetbacks) {
-            if (mode === 'bas') return 0;
-            if (mode === 'dec') return -config.decayRate * y;
-            if (mode === 'int') {
-                let score = 0;
-                for (let t of config.spikes) {
-                    if (y >= t) score += config.spikeHeight * Math.exp(-(y - t) * config.spikeFade);
-                }
-                return score;
+            health: {
+                baseMsg: "Daily movement and clean fuel build an unstoppable engine. Intensity burns you out quickly, while neglect slowly drains your baseline.",
+                skipMsg: "Even if you get sick, miss workouts, or eat poorly sometimes, refusing to quit keeps your overall trajectory soaring upwards.",
+                conBase: 5, conComp: 0.08, intBurst: 40, intDecay: 2.0, decBase: 2, decComp: 0.03
+            },
+            money: {
+                baseMsg: "Investing tiny amounts relentlessly results in explosive wealth over decades. Chasing hyped, intense bets usually crashes back to zero.",
+                skipMsg: "Even with unexpected car repairs, market dips, or months where you can't save a dime, compounding math absorbs the blows over time.",
+                conBase: 8, conComp: 0.10, intBurst: 60, intDecay: 2.5, decBase: 3, decComp: 0.05
+            },
+            learning: {
+                baseMsg: "Reading 10 pages a day silently transforms your mind. Cramming intensely for a week is forgotten by next month. Stagnation rusts the brain.",
+                skipMsg: "You will have unmotivated weeks where you learn nothing. But simply returning to the habit afterward secures your long-term mastery.",
+                conBase: 7, conComp: 0.09, intBurst: 50, intDecay: 1.8, decBase: 1.5, decComp: 0.02
+            },
+            relationships: {
+                baseMsg: "Small, daily moments of presence forge unbreakable trust. Throwing expensive apology gifts doesn't fix a lack of daily connection.",
+                skipMsg: "Arguments, misunderstandings, and distance happen in real life. True bonds recover from these drops because the baseline of care is so strong.",
+                conBase: 10, conComp: 0.06, intBurst: 80, intDecay: 3.0, decBase: 4, decComp: 0.04
             }
-            if (mode === 'con') {
-                let score = config.baseGrowth * (Math.pow(config.compoundRate, y) - 1);
-                if (useSetbacks) {
-                    let penalty = 0;
-                    for (let t of config.setbacks) {
-                        if (y >= t) {
-                            let scoreAtTimeOfSetback = config.baseGrowth * (Math.pow(config.compoundRate, t) - 1);
-                            // Penalty decays over time because consistency pushes you back up
-                            penalty += (scoreAtTimeOfSetback * config.setbackSeverity) * Math.exp(-(y - t) * config.recoveryRate);
+        };
+
+        let state = {
+            tab: 'health',
+            maxYears: 1,
+            hasSkips: false,
+            sliderVal: 1,
+            paths: { con: [], int: [], dec: [] },
+            bounds: { max: 10, min: -10 }
+        };
+
+        const canvas = document.getElementById('horizonChart');
+        const ctx = canvas.getContext('2d');
+        const elements = {
+            tabs: document.querySelectorAll('#domain-tabs button'),
+            scales: document.querySelectorAll('#scale-tabs button'),
+            skipToggle: document.getElementById('skip-toggle'),
+            slider: document.getElementById('timeline-slider'),
+            label: document.getElementById('year-label'),
+            lesson: document.getElementById('lesson-box')
+        };
+
+        // Pseudo-random generator for consistent "life bumps"
+        const seededRandom = (seed) => {
+            let x = Math.sin(seed++) * 10000;
+            return x - Math.floor(x);
+        };
+
+        // Core Mathematical Engine - Precomputes the entire trajectory
+        function generatePaths() {
+            let paths = { con: [], int: [], dec: [] };
+            let v = { con: 0, int: 0, dec: 0 };
+            
+            // Finer resolution for 1 year, broader for 50 years
+            let steps = state.maxYears <= 1 ? 365 : state.maxYears * 52; 
+            let dt = state.maxYears / steps;
+            let cfg = config[state.tab];
+
+            let burstCycle = state.maxYears <= 1 ? (365/8) : 2; // Intense bursts frequency
+
+            for (let i = 0; i <= steps; i++) {
+                let y = i * dt;
+                
+                // 1. Consistency Math
+                v.con += cfg.conBase * dt;
+                v.con += v.con * cfg.conComp * dt;
+
+                // Apply Real Life Skips
+                if (state.hasSkips) {
+                    let rand = seededRandom(i * 12.34 + y * 56.78);
+                    
+                    if (state.maxYears <= 1) {
+                        // In a 1-year scale: Missed days / small hiccups
+                        if (rand > 0.85) v.con -= cfg.conBase * dt * 3; 
+                    } else {
+                        // In a multi-year scale: Major life emergencies (illness, layoffs, etc.)
+                        if (rand > 0.985) {
+                            v.con *= 0.82; // 18% catastrophic drop
+                        } else if (rand > 0.90) {
+                            v.con -= cfg.conBase * dt * 10; // Bad month
                         }
                     }
-                    score -= penalty;
                 }
-                return Math.max(0, score); // Prevent negative consistency
+
+                // 2. Intensity Math
+                if ((y % burstCycle) < (burstCycle * 0.1)) {
+                    v.int += cfg.intBurst * dt;
+                } else {
+                    v.int -= v.int * cfg.intDecay * dt;
+                    if (v.int < 0) v.int = 0;
+                }
+
+                // 3. Decay Math
+                v.dec -= cfg.decBase * dt;
+                v.dec -= Math.abs(v.dec) * cfg.decComp * dt;
+
+                paths.con.push({x: y, y: v.con});
+                paths.int.push({x: y, y: v.int});
+                paths.dec.push({x: y, y: v.dec});
             }
-        }
 
-        function setTab(tab) {
-            document.querySelectorAll('#tabs button').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
-            activeTab = tab;
-            drawChart();
-        }
-
-        function setScale(years) {
-            document.querySelectorAll('#scales button').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
-            maxScale = years;
+            state.paths = paths;
             
-            // Adjust slider bounds dynamically
-            slider.max = maxScale;
-            slider.step = maxScale === 1 ? 0.01 : 0.1;
-            slider.value = maxScale; 
-            
-            drawChart();
+            // Lock bounds to the current scale to perfectly visualize relative progress
+            let allY = [...paths.con, ...paths.int, ...paths.dec].map(p => p.y);
+            state.bounds.max = Math.max(10, ...allY);
+            state.bounds.min = Math.min(-10, ...allY);
         }
 
         function drawChart() {
-            let currentY = parseFloat(slider.value);
-            timeLabel.innerText = currentY < 1 ? (currentY*12).toFixed(1) + "mo" : currentY.toFixed(1);
-            
-            const useSetbacks = toggle.checked;
-            
-            // Dynamic UI Text Update
-            let lbox = document.getElementById('lesson-box');
-            let setbackText = useSetbacks ? " <br><br><b>Notice:</b> Real life brought emergencies (dips in the green line), but because you didn't quit, you rapidly recovered." : "";
-            lbox.innerHTML = `<div class="scale-badge">${maxScale} Year View</div><br>${lessons[maxScale.toString()]}${setbackText}`;
-
-            // Canvas Setup
             const dpr = window.devicePixelRatio || 1;
             const rect = canvas.getBoundingClientRect();
             canvas.width = rect.width * dpr;
@@ -209,67 +269,115 @@
             ctx.scale(dpr, dpr);
 
             const w = rect.width, h = rect.height;
-            const padL = 40, padR = 20, padT = 30, padB = 30;
-            const gW = w - padL - padR, gH = h - padT - padB;
-            
+            const padL = 10, padR = 10, padT = 20, padB = 25;
+            const graphW = w - padL - padR;
+            const graphH = h - padT - padB;
+
             ctx.clearRect(0, 0, w, h);
 
-            // Dynamic Zooming: Calculate max and min values based on the SELECTED SCALE
-            const maxCon = getScore(maxScale, 'con', false);
-            const maxY = Math.max(maxCon, config.spikeHeight) * 1.1; 
-            const minY = getScore(maxScale, 'dec', false) * 1.1;
-            const totalRange = maxY - minY;
-            const zeroY = padT + (maxY / totalRange) * gH;
+            // Dynamically place the Zero Baseline based on min/max extremes
+            const range = state.bounds.max - state.bounds.min;
+            const zeroY = padT + (state.bounds.max / range) * graphH;
 
-            // Background Grid & Labels
-            ctx.fillStyle = '#a8a6a1'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
-            const steps = maxScale === 1 ? 12 : 5;
-            for (let i = 0; i <= steps; i++) {
-                let yVal = (i / steps) * maxScale;
-                let x = padL + (yVal / maxScale) * gW;
+            // Draw Background Grids & Time Labels
+            ctx.fillStyle = '#a8a7a4'; ctx.font = '10px -apple-system, sans-serif'; ctx.textAlign = 'center';
+            let divisions = state.maxYears <= 1 ? 12 : state.maxYears === 10 ? 10 : 10;
+            
+            for (let i = 0; i <= divisions; i++) {
+                let yVal = (i / divisions) * state.maxYears;
+                let x = padL + (i / divisions) * graphW;
                 
-                let label = maxScale === 1 ? (i===0?'Start':i+'m') : (i===0?'Start':yVal+'y');
-                ctx.fillText(label, x, h - 10);
-
-                ctx.beginPath(); ctx.strokeStyle = 'rgba(0,0,0,0.04)'; ctx.lineWidth = 1;
-                ctx.moveTo(x, padT); ctx.lineTo(x, h - padB); ctx.stroke();
+                let label = state.maxYears <= 1 ? `Mo ${i}` : `Yr ${Math.round(yVal)}`;
+                if (i === 0) label = 'Start';
+                
+                ctx.fillText(label, x, h - 5);
+                ctx.beginPath(); ctx.strokeStyle = 'rgba(0,0,0,0.02)'; ctx.moveTo(x, padT); ctx.lineTo(x, h - padB); ctx.stroke();
             }
 
-            // Zero Baseline
-            ctx.strokeStyle = '#c9c8c5'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 4]);
-            ctx.beginPath(); ctx.moveTo(padL, zeroY); ctx.lineTo(padL + gW, zeroY); ctx.stroke();
-            ctx.setLineDash([]);
+            // Draw Zero Baseline
+            ctx.beginPath(); ctx.strokeStyle = '#d1d0cd'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 4]);
+            ctx.moveTo(padL, zeroY); ctx.lineTo(padL + graphW, zeroY); ctx.stroke(); ctx.setLineDash([]);
 
-            // Rendering Engine
-            const drawLine = (mode, color, width) => {
-                let points = [];
-                for (let y = 0; y <= currentY; y += (maxScale/200)) {
-                    let score = getScore(y, mode, useSetbacks);
-                    let x = padL + (y / maxScale) * gW;
-                    let yPos = zeroY - (score / totalRange) * gH;
-                    points.push({x, y: yPos});
-                }
-                
-                if (points.length === 0) return;
-                
-                ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = width; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-                ctx.moveTo(points[0].x, points[0].y);
-                for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
-                ctx.stroke();
+            // Plotting Helper
+            const drawPath = (pathArray, color, width) => {
+                // Filter path to only draw up to the slider's current time value
+                let activePoints = pathArray.filter(p => p.x <= state.sliderVal);
+                if(activePoints.length === 0) return;
 
-                // Leading Dot
-                let last = points[points.length - 1];
-                ctx.beginPath(); ctx.fillStyle = color;
-                ctx.arc(last.x, last.y, width * 1.5, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = width;
+                ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+                
+                activePoints.forEach((p, idx) => {
+                    let cx = padL + (p.x / state.maxYears) * graphW;
+                    let cy = zeroY - (p.y / state.bounds.max) * (zeroY - padT);
+                    if(p.y < 0) cy = zeroY + (Math.abs(p.y) / Math.abs(state.bounds.min)) * (h - padB - zeroY);
+                    
+                    if(idx === 0) ctx.moveTo(cx, cy); else ctx.lineTo(cx, cy);
+                    
+                    // Draw leading dot
+                    if(idx === activePoints.length - 1) {
+                        ctx.stroke();
+                        ctx.beginPath(); ctx.fillStyle = color;
+                        ctx.arc(cx, cy, width * 1.3, 0, Math.PI * 2); ctx.fill();
+                    }
+                });
             };
 
-            // Draw paths back-to-front
-            drawLine('dec', 'var(--decay)', 1.5);
-            drawLine('int', 'var(--intensity)', 2);
-            drawLine('con', 'var(--consistency)', 3.5);
+            drawPath(state.paths.dec, '#9e2a2b', 1.5);
+            drawPath(state.paths.int, '#c96f53', 1.5);
+            drawPath(state.paths.con, '#3b5943', 3.5);
+
+            // Update Lesson Text
+            let msg = config[state.tab].baseMsg;
+            if (state.hasSkips) msg += " <br><br><strong>Reality Check:</strong> " + config[state.tab].skipMsg;
+            elements.lesson.innerHTML = `“${msg}”`;
         }
 
+        // Event Listeners
+        elements.tabs.forEach(btn => btn.addEventListener('click', (e) => {
+            elements.tabs.forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            state.tab = e.target.dataset.tab;
+            generatePaths(); drawChart();
+        }));
+
+        elements.scales.forEach(btn => btn.addEventListener('click', (e) => {
+            elements.scales.forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            
+            let newMax = parseFloat(e.target.dataset.scale);
+            let ratio = state.sliderVal / state.maxYears; // Maintain relative slider position
+            
+            state.maxYears = newMax;
+            elements.slider.max = state.maxYears;
+            elements.slider.step = state.maxYears <= 1 ? 0.01 : 0.5;
+            elements.slider.value = state.maxYears * ratio;
+            state.sliderVal = parseFloat(elements.slider.value);
+            
+            elements.label.innerText = state.maxYears <= 1 
+                ? `Month ${(state.sliderVal * 12).toFixed(1)}` 
+                : `Year ${state.sliderVal.toFixed(1)}`;
+                
+            generatePaths(); drawChart();
+        }));
+
+        elements.skipToggle.addEventListener('change', (e) => {
+            state.hasSkips = e.target.checked;
+            generatePaths(); drawChart();
+        });
+
+        elements.slider.addEventListener('input', (e) => {
+            state.sliderVal = parseFloat(e.target.value);
+            elements.label.innerText = state.maxYears <= 1 
+                ? `Month ${(state.sliderVal * 12).toFixed(1)}` 
+                : `Year ${state.sliderVal.toFixed(1)}`;
+            drawChart();
+        });
+
         window.addEventListener('resize', drawChart);
+        
+        // Init
+        generatePaths();
         setTimeout(drawChart, 50);
     </script>
 </body>
