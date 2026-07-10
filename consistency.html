@@ -42,7 +42,7 @@
             background: rgba(0, 0, 0, 0.025);
             padding: 4px;
             border-radius: 99px;
-            margin: 0 auto 2rem auto;
+            margin: 0 auto 1.5rem auto;
             width: max-content;
         }
 
@@ -63,6 +63,49 @@
             color: var(--text-main);
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
         }
+
+        /* Premium Slider */
+        .timeline-control {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 0.75rem;
+        }
+
+        .timeline-control label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .timeline-control label span {
+            color: var(--consistency);
+            font-weight: 600;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 80%;
+            max-width: 400px;
+            background: transparent;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: var(--consistency);
+            cursor: pointer;
+            margin-top: -7px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+        }
+
+        input[type=range]::-webkit-slider-thumb:active { transform: scale(1.2); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: var(--border); border-radius: 4px; }
+        input[type=range]:focus { outline: none; }
 
         .canvas-card {
             background: var(--surface);
@@ -103,15 +146,15 @@
         .dec-label { color: var(--decay); } .dec-label::before { background: var(--decay); }
 
         .legend-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; font-weight: 300; }
-        #lesson-box { text-align: center; font-size: 0.9rem; line-height: 1.6; color: var(--text-main); font-weight: 300; padding: 0 1rem; min-height: 50px; }
+        #lesson-box { text-align: center; font-size: 0.95rem; line-height: 1.6; color: var(--text-main); font-weight: 300; padding: 0 1rem; min-height: 50px; }
     </style>
 </head>
 <body>
 
     <div class="wrapper">
         <header>
-            <h1>The Horizon of 30 Years</h1>
-            <p class="subtitle">How tiny actions compound—or decay—over a generation.</p>
+            <h1>The Geometry of Time</h1>
+            <p class="subtitle">Drag the timeline to see how effort hides before it compounds.</p>
         </header>
 
         <div class="tabs">
@@ -119,6 +162,11 @@
             <button onclick="switchTab(this, 'money')">Wealth</button>
             <button onclick="switchTab(this, 'learning')">Mind</button>
             <button onclick="switchTab(this, 'relationships')">Bonds</button>
+        </div>
+
+        <div class="timeline-control">
+            <label>Duration: <span id="year-label">30</span> Years</label>
+            <input type="range" id="yearSlider" min="1" max="50" value="30" oninput="updateSlider()">
         </div>
 
         <div class="canvas-card">
@@ -129,7 +177,7 @@
             <div class="legend">
                 <div class="legend-item">
                     <span class="legend-label con-label">Consistency</span>
-                    <span class="legend-desc">Unstoppable exponential growth.</span>
+                    <span class="legend-desc">Silent early on, explosive later.</span>
                 </div>
                 <div class="legend-item">
                     <span class="legend-label int-label">Intensity</span>
@@ -150,29 +198,41 @@
     </div>
 
     <script>
+        // A helper function to create a clean exponential compounding curve up to a max value
+        const compound = (y, rate, maxScore) => maxScore * ((Math.pow(rate, y) - 1) / (Math.pow(rate, 50) - 1));
+
         const dataConfig = {
             health: {
-                msg: "“Consistent daily walks and clean fuel create a vibrant 30-year engine. Rare, exhausting fitness kicks do not protect you. Doing nothing keeps you frail, while active abuse drops your health below zero.”",
-                // Map values between -100 and +300
-                formula: (y, m) => m === 'con' ? 0 + (y * 8.5) : m === 'int' ? (y % 6 < 1 ? 35 : 0) : m === 'base' ? 0 : 0 - (y * 2.8)
+                msg: "“Notice how eating well and moving daily shows almost no visible results for the first few years. But as you pass year 20, the vitality gap becomes massive.”",
+                formula: (y, m) => m === 'con' ? compound(y, 1.09, 100) : m === 'int' ? (y % 8 < 1.5 ? 20 : 0) : m === 'base' ? 0 : 0 - (y * 0.9)
             },
             money: {
-                msg: "“Investing a single dollar every day lets decades of compounding create a fortress. Chasing intense lottery-style trends leaves you empty. Doing nothing builds zero growth; borrowing or wasting creates debt.”",
-                formula: (y, m) => m === 'con' ? 10 * Math.pow(1.11, y) - 10 : m === 'int' ? (y === 8 || y === 18 || y === 26 ? 60 : 0) : m === 'base' ? 0 : 0 - (y * 2.5)
+                msg: "“Saving a tiny amount daily feels useless at year 3. By year 40, the momentum is unstoppable. Intense, risky bets (spikes) usually wipe out and drop back to zero.”",
+                formula: (y, m) => m === 'con' ? compound(y, 1.12, 100) : m === 'int' ? (y === 5 || y === 18 || y === 32 ? 35 : 0) : m === 'base' ? 0 : 0 - (y * 1.2)
             },
             learning: {
-                msg: "“Reading just 10 pages a day compounds into profound wisdom over 30 years. Intense cramming sessions are quickly forgotten. Stagnation leaves you stuck, while digital distractions actively decay focus.”",
-                formula: (y, m) => m === 'con' ? 0 + (y * 9) : m === 'int' ? (Math.floor(y/3) % 2 === 0 ? 25 : 0) : m === 'base' ? 0 : 0 - (100 * (1 - Math.exp(-y*0.08)))
+                msg: "“Reading 10 pages a day won't make you a genius in a month. But over decades, the accumulated wisdom forms a hockey-stick curve. Stagnation rots the mind over time.”",
+                formula: (y, m) => m === 'con' ? compound(y, 1.10, 100) : m === 'int' ? (Math.floor(y/4) % 2 === 0 ? 15 : 0) : m === 'base' ? 0 : -30 * (1 - Math.exp(-y*0.05))
             },
             relationships: {
-                msg: "“Small, daily gestures of affection forge lifelong, unbreakable bonds. Grand, sporadic apology gifts cannot replace presence. Neglect results in zero depth; continuous friction breaks ties completely.”",
-                formula: (y, m) => m === 'con' ? 0 + (y * 7.5) : m === 'int' ? (y % 5 === 0 ? 45 : -5) : m === 'base' ? 0 : 0 - (y * 3.1)
+                msg: "“Trust takes decades to compound. Grand apologies and intense gestures look big at the moment, but without consistency, the relationship returns to baseline.”",
+                formula: (y, m) => m === 'con' ? compound(y, 1.07, 100) : m === 'int' ? (y % 6 === 0 ? 25 : -2) : m === 'base' ? 0 : 0 - (y * 1.0)
             }
         };
 
         let activeTab = 'health';
+        let currentYears = 30;
+        const MAX_YEARS = 50;
         const canvas = document.getElementById('horizonChart');
         const ctx = canvas.getContext('2d');
+        const yearLabel = document.getElementById('year-label');
+        const yearSlider = document.getElementById('yearSlider');
+
+        function updateSlider() {
+            currentYears = parseInt(yearSlider.value);
+            yearLabel.innerText = currentYears;
+            drawChart();
+        }
 
         function drawChart() {
             const dpr = window.devicePixelRatio || 1;
@@ -189,42 +249,52 @@
 
             ctx.clearRect(0, 0, w, h);
 
-            // Establish "Zero Baseline" position internally (2/3 down the graph)
-            const zeroY = padT + (graphH * 0.7);
+            // Establish "Zero Baseline" internally (3/4 down the graph to leave room for exponential peaks)
+            const zeroY = padT + (graphH * 0.75);
 
-            // Render Time Labels (Years 0 to 30)
+            // Draw Background Timeline Grid (Fixed to 50 years so the frame of reference never moves)
             ctx.fillStyle = '#b5b4b0';
             ctx.font = '10px -apple-system, sans-serif';
             ctx.textAlign = 'center';
-            for (let y = 0; y <= 30; y += 10) {
-                let x = padL + (y / 30) * graphW;
+            for (let y = 0; y <= MAX_YEARS; y += 10) {
+                let x = padL + (y / MAX_YEARS) * graphW;
                 ctx.fillText(y === 0 ? 'Start' : 'Yr ' + y, x, h - 10);
+                
+                // Light vertical guidelines
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgba(0,0,0,0.03)';
+                ctx.lineWidth = 1;
+                ctx.moveTo(x, padT);
+                ctx.lineTo(x, h - padB);
+                ctx.stroke();
             }
 
-            // 1. Draw the absolute "Doing Nothing" / Zero Baseline Line
+            // Draw the absolute "Doing Nothing" / Zero Baseline Line
             ctx.strokeStyle = '#d1d0cd';
             ctx.lineWidth = 1.5;
-            ctx.setLineDash([4, 4]); // Clean dash structure
+            ctx.setLineDash([4, 4]);
             ctx.beginPath();
             ctx.moveTo(padL, zeroY);
             ctx.lineTo(padL + graphW, zeroY);
             ctx.stroke();
-            ctx.setLineDash([]); // Reset dash for dynamic paths
+            ctx.setLineDash([]);
 
-            // Scaling helper to map formula scores cleanly between the +300 / -100 grid bounds
+            // Helper to get coordinates. 
+            // Max score is normalized to 100 up, 50 down
             const getPoints = (mode) => {
                 let points = [];
-                for (let y = 0; y <= 30; y += 0.2) {
+                // ONLY calculate up to the current selected year!
+                for (let y = 0; y <= currentYears; y += 0.2) {
                     let score = dataConfig[activeTab].formula(y, mode);
-                    let x = padL + (y / 30) * graphW;
-                    // positive scores go up from zero, negative scores sink down
-                    let yPos = zeroY - (score / 300) * (graphH * 0.7); 
+                    let x = padL + (y / MAX_YEARS) * graphW;
+                    let yPos = zeroY - (score / 100) * (graphH * 0.75); 
                     points.push({x, y: yPos});
                 }
                 return points;
             };
 
             const drawPath = (points, color, width) => {
+                if(points.length === 0) return;
                 ctx.beginPath();
                 ctx.strokeStyle = color;
                 ctx.lineWidth = width;
@@ -235,9 +305,15 @@
                     ctx.lineTo(points[i].x, points[i].y);
                 }
                 ctx.stroke();
+
+                // Draw a small dot at the leading edge to show "current point in time"
+                let lastPoint = points[points.length - 1];
+                ctx.beginPath();
+                ctx.fillStyle = color;
+                ctx.arc(lastPoint.x, lastPoint.y, width * 1.2, 0, Math.PI * 2);
+                ctx.fill();
             };
 
-            // Render with intentional depth layers
             drawPath(getPoints('dec'), '#9e2a2b', 1.5);
             drawPath(getPoints('int'), '#c96f53', 1.5);
             drawPath(getPoints('con'), '#3b5943', 3.5); 
