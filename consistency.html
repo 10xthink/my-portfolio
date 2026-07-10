@@ -3,194 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Geometry of Time</title>
+    <title>The Geometry of Habits</title>
     <style>
         :root {
-            --bg: #fbfbfa;
-            --surface: #ffffff;
-            --text-main: #1c1c1c;
-            --text-muted: #787774;
-            --border: #ecebe9;
-            --consistency: #3b5943; 
-            --intensity: #c96f53;   
-            --decay: #9e2a2b;       
-            --zero: #d1d0cd;        
+            --bg: #fcfbf9; --surface: #ffffff; --text-main: #2b2a28; --text-muted: #84827e;
+            --border: #e6e5e1; --consistency: #446950; --intensity: #c26d53; 
+            --decay: #944040; --zero: #c9c8c5; --accent: #eef2ef;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg);
-            color: var(--text-main);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 2rem;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        .wrapper { width: 100%; max-width: 760px; }
-        header { text-align: center; margin-bottom: 2rem; }
-        h1 { font-size: 1.6rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.4rem; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text-main); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 1.5rem; -webkit-font-smoothing: antialiased; }
+        .wrapper { width: 100%; max-width: 780px; }
+        
+        header { text-align: center; margin-bottom: 1.5rem; }
+        h1 { font-size: 1.6rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.3rem; }
         p.subtitle { font-size: 0.9rem; color: var(--text-muted); font-weight: 300; }
 
-        .tabs {
-            display: flex;
-            background: rgba(0, 0, 0, 0.025);
-            padding: 4px;
-            border-radius: 99px;
-            margin: 0 auto 1.5rem auto;
-            width: max-content;
-        }
+        /* Controls UI */
+        .controls-card { background: var(--surface); border-radius: 16px; padding: 1.2rem 1.5rem; border: 1px solid var(--border); box-shadow: 0 2px 15px rgba(0,0,0,0.02); margin-bottom: 1.2rem; display: flex; flex-direction: column; gap: 1.5rem; }
+        .row-space-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        
+        .pill-group { display: flex; background: rgba(0,0,0,0.03); padding: 4px; border-radius: 99px; }
+        .pill-group button { background: transparent; border: none; padding: 0.4rem 1rem; font-size: 0.8rem; font-weight: 500; color: var(--text-muted); border-radius: 99px; cursor: pointer; transition: all 0.2s; }
+        .pill-group button.active { background: var(--surface); color: var(--text-main); box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
 
-        .tabs button {
-            background: transparent;
-            border: none;
-            padding: 0.5rem 1.2rem;
-            font-size: 0.85rem;
-            font-weight: 400;
-            color: var(--text-muted);
-            border-radius: 99px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
+        /* Toggle Switch */
+        .toggle-container { display: flex; align-items: center; gap: 0.75rem; font-size: 0.85rem; font-weight: 500; color: var(--text-main); cursor: pointer; }
+        .switch { position: relative; width: 40px; height: 22px; background-color: var(--border); border-radius: 22px; transition: 0.3s; }
+        .switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; background-color: white; border-radius: 50%; transition: 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        input:checked + .switch { background-color: var(--consistency); }
+        input:checked + .switch::after { transform: translateX(18px); }
+        input[type="checkbox"] { display: none; }
 
-        .tabs button.active {
-            background: var(--surface);
-            color: var(--text-main);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-        }
-
-        /* Premium Slider */
-        .timeline-control {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 2rem;
-            gap: 0.75rem;
-        }
-
-        .timeline-control label {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--text-main);
-        }
-
-        .timeline-control label span {
-            color: var(--consistency);
-            font-weight: 600;
-        }
-
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 80%;
-            max-width: 400px;
-            background: transparent;
-        }
-
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 18px;
-            width: 18px;
-            border-radius: 50%;
-            background: var(--consistency);
-            cursor: pointer;
-            margin-top: -7px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transition: transform 0.1s;
-        }
-
+        /* Slider */
+        .slider-row { display: flex; align-items: center; gap: 1rem; font-size: 0.85rem; font-weight: 500; }
+        input[type=range] { -webkit-appearance: none; flex-grow: 1; height: 4px; background: var(--border); border-radius: 4px; cursor: pointer; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--consistency); cursor: pointer; margin-top: -6px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); transition: transform 0.1s; }
         input[type=range]::-webkit-slider-thumb:active { transform: scale(1.2); }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: var(--border); border-radius: 4px; }
-        input[type=range]:focus { outline: none; }
 
-        .canvas-card {
-            background: var(--surface);
-            border-radius: 14px;
-            padding: 1.75rem;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.01);
-            margin-bottom: 1.5rem;
-        }
-
-        .canvas-container { position: relative; width: 100%; height: 340px; }
+        /* Canvas & Chart */
+        .canvas-card { background: var(--surface); border-radius: 16px; padding: 1.5rem; border: 1px solid var(--border); box-shadow: 0 4px 24px rgba(0,0,0,0.015); }
+        .canvas-container { position: relative; width: 100%; height: 320px; }
         canvas { width: 100%; height: 100%; }
 
-        .legend {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            border-top: 1px solid var(--border);
-            padding-top: 1.5rem;
-            margin-top: 0.5rem;
-        }
+        .legend { display: flex; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem; }
+        .legend-item { display: flex; flex-direction: column; gap: 0.2rem; width: 22%; }
+        .legend-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; display: flex; align-items: center; gap: 5px; }
+        .legend-label::before { content: ''; width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+        .c-con { color: var(--consistency); } .c-con::before { background: var(--consistency); }
+        .c-int { color: var(--intensity); } .c-int::before { background: var(--intensity); }
+        .c-dec { color: var(--decay); } .c-dec::before { background: var(--decay); }
+        .c-bas { color: var(--text-muted); } .c-bas::before { background: var(--zero); }
+        .legend-desc { font-size: 0.7rem; color: var(--text-muted); line-height: 1.3; }
 
-        .legend-item { display: flex; flex-direction: column; gap: 0.2rem; }
-        .legend-label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.03em;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .legend-label::before { content: ''; width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
-        .con-label { color: var(--consistency); } .con-label::before { background: var(--consistency); }
-        .int-label { color: var(--intensity); } .int-label::before { background: var(--intensity); }
-        .base-label { color: #8a8986; } .base-label::before { background: var(--zero); }
-        .dec-label { color: var(--decay); } .dec-label::before { background: var(--decay); }
-
-        .legend-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; font-weight: 300; }
-        #lesson-box { text-align: center; font-size: 0.95rem; line-height: 1.6; color: var(--text-main); font-weight: 300; padding: 0 1rem; min-height: 50px; }
+        #lesson-box { text-align: center; font-size: 0.95rem; line-height: 1.5; color: var(--text-main); font-weight: 400; padding: 1.5rem 1rem 0; min-height: 60px; font-style: italic; }
+        .scale-badge { background: var(--accent); color: var(--consistency); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.5rem; display: inline-block; }
     </style>
 </head>
 <body>
 
     <div class="wrapper">
         <header>
-            <h1>The Geometry of Time</h1>
-            <p class="subtitle">Drag the timeline to see how effort hides before it compounds.</p>
+            <h1>The Geometry of Habits</h1>
+            <p class="subtitle">See how time and setbacks change the game.</p>
         </header>
 
-        <div class="tabs">
-            <button class="active" onclick="switchTab(this, 'health')">Health</button>
-            <button onclick="switchTab(this, 'money')">Wealth</button>
-            <button onclick="switchTab(this, 'learning')">Mind</button>
-            <button onclick="switchTab(this, 'relationships')">Bonds</button>
-        </div>
+        <div class="controls-card">
+            <div class="row-space-between">
+                <div class="pill-group" id="tabs">
+                    <button class="active" onclick="setTab('health')">Health</button>
+                    <button onclick="setTab('money')">Wealth</button>
+                    <button onclick="setTab('learning')">Mind</button>
+                    <button onclick="setTab('relationships')">Bonds</button>
+                </div>
+                
+                <label class="toggle-container">
+                    <input type="checkbox" id="realLifeToggle" onchange="drawChart()">
+                    <div class="switch"></div>
+                    Include Real-Life Setbacks
+                </label>
+            </div>
 
-        <div class="timeline-control">
-            <label>Duration: <span id="year-label">30</span> Years</label>
-            <input type="range" id="yearSlider" min="1" max="50" value="30" oninput="updateSlider()">
+            <div class="row-space-between">
+                <div class="pill-group" id="scales">
+                    <button onclick="setScale(1)">1 Year</button>
+                    <button onclick="setScale(10)">10 Years</button>
+                    <button class="active" onclick="setScale(50)">50 Years</button>
+                </div>
+                
+                <div class="slider-row" style="flex-grow: 1; max-width: 300px;">
+                    <span>Time: <span id="timeLabel">50</span>y</span>
+                    <input type="range" id="timeSlider" min="0" max="50" step="0.1" value="50" oninput="drawChart()">
+                </div>
+            </div>
         </div>
 
         <div class="canvas-card">
-            <div class="canvas-container">
-                <canvas id="horizonChart"></canvas>
-            </div>
+            <div class="canvas-container"><canvas id="chart"></canvas></div>
             
             <div class="legend">
-                <div class="legend-item">
-                    <span class="legend-label con-label">Consistency</span>
-                    <span class="legend-desc">Silent early on, explosive later.</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-label int-label">Intensity</span>
-                    <span class="legend-desc">Bursts that fizzle back to baseline.</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-label base-label">Doing Nothing</span>
-                    <span class="legend-desc">The absolute flat baseline.</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-label dec-label">Active Decay</span>
-                    <span class="legend-desc">Negative choices dipping below zero.</span>
-                </div>
+                <div class="legend-item"><span class="legend-label c-con">Consistency</span><span class="legend-desc">Small daily steps. Recovers from drops.</span></div>
+                <div class="legend-item"><span class="legend-label c-int">Intensity</span><span class="legend-desc">Massive bursts, quick fade.</span></div>
+                <div class="legend-item"><span class="legend-label c-bas">Baseline</span><span class="legend-desc">Doing absolutely nothing.</span></div>
+                <div class="legend-item"><span class="legend-label c-dec">Active Decay</span><span class="legend-desc">Bad habits permanently erode.</span></div>
             </div>
         </div>
 
@@ -198,134 +113,160 @@
     </div>
 
     <script>
-        // A helper function to create a clean exponential compounding curve up to a max value
-        const compound = (y, rate, maxScore) => maxScore * ((Math.pow(rate, y) - 1) / (Math.pow(rate, 50) - 1));
+        // Mathematical Engine Configuration
+        const config = {
+            baseGrowth: 2.5,
+            compoundRate: 1.13,   // Exponential compounding factor
+            spikeHeight: 8.0,     // How high an "Intensity" spike goes
+            spikeFade: 6.0,       // How fast an "Intensity" spike drops back to zero
+            decayRate: 1.8,       // How fast doing nothing/bad habits pull you down
+            setbackSeverity: 0.35, // A setback wipes out 35% of current progress
+            recoveryRate: 2.5,    // How fast consistency heals a setback
+            // Predetermined timeline events (in years)
+            setbacks: [0.3, 0.8, 2.2, 4.5, 7.1, 11, 15, 21, 28, 35, 42],
+            spikes: [0.1, 0.7, 1.8, 3.5, 6, 9.5, 14, 20, 27, 36, 45]
+        };
 
-        const dataConfig = {
-            health: {
-                msg: "“Notice how eating well and moving daily shows almost no visible results for the first few years. But as you pass year 20, the vitality gap becomes massive.”",
-                formula: (y, m) => m === 'con' ? compound(y, 1.09, 100) : m === 'int' ? (y % 8 < 1.5 ? 20 : 0) : m === 'base' ? 0 : 0 - (y * 0.9)
-            },
-            money: {
-                msg: "“Saving a tiny amount daily feels useless at year 3. By year 40, the momentum is unstoppable. Intense, risky bets (spikes) usually wipe out and drop back to zero.”",
-                formula: (y, m) => m === 'con' ? compound(y, 1.12, 100) : m === 'int' ? (y === 5 || y === 18 || y === 32 ? 35 : 0) : m === 'base' ? 0 : 0 - (y * 1.2)
-            },
-            learning: {
-                msg: "“Reading 10 pages a day won't make you a genius in a month. But over decades, the accumulated wisdom forms a hockey-stick curve. Stagnation rots the mind over time.”",
-                formula: (y, m) => m === 'con' ? compound(y, 1.10, 100) : m === 'int' ? (Math.floor(y/4) % 2 === 0 ? 15 : 0) : m === 'base' ? 0 : -30 * (1 - Math.exp(-y*0.05))
-            },
-            relationships: {
-                msg: "“Trust takes decades to compound. Grand apologies and intense gestures look big at the moment, but without consistency, the relationship returns to baseline.”",
-                formula: (y, m) => m === 'con' ? compound(y, 1.07, 100) : m === 'int' ? (y % 6 === 0 ? 25 : -2) : m === 'base' ? 0 : 0 - (y * 1.0)
-            }
+        const lessons = {
+            '1': "In the micro view (1 Year), massive spikes of Intensity look amazing, while Consistency feels painfully slow. Setbacks feel like the end of the world.",
+            '10': "Zooming out to a decade, Consistency crosses Intensity. The exponential curve begins, and Setbacks are quickly healed by daily habits.",
+            '50': "Over a lifetime, Consistency's compounding math crushes everything else. Early spikes disappear into flatlines, and Setbacks become tiny blips on the journey upward."
         };
 
         let activeTab = 'health';
-        let currentYears = 30;
-        const MAX_YEARS = 50;
-        const canvas = document.getElementById('horizonChart');
+        let maxScale = 50;
+        
+        const canvas = document.getElementById('chart');
         const ctx = canvas.getContext('2d');
-        const yearLabel = document.getElementById('year-label');
-        const yearSlider = document.getElementById('yearSlider');
+        const slider = document.getElementById('timeSlider');
+        const timeLabel = document.getElementById('timeLabel');
+        const toggle = document.getElementById('realLifeToggle');
+        
+        // Universal function to calculate the score at any given time (y)
+        function getScore(y, mode, useSetbacks) {
+            if (mode === 'bas') return 0;
+            if (mode === 'dec') return -config.decayRate * y;
+            if (mode === 'int') {
+                let score = 0;
+                for (let t of config.spikes) {
+                    if (y >= t) score += config.spikeHeight * Math.exp(-(y - t) * config.spikeFade);
+                }
+                return score;
+            }
+            if (mode === 'con') {
+                let score = config.baseGrowth * (Math.pow(config.compoundRate, y) - 1);
+                if (useSetbacks) {
+                    let penalty = 0;
+                    for (let t of config.setbacks) {
+                        if (y >= t) {
+                            let scoreAtTimeOfSetback = config.baseGrowth * (Math.pow(config.compoundRate, t) - 1);
+                            // Penalty decays over time because consistency pushes you back up
+                            penalty += (scoreAtTimeOfSetback * config.setbackSeverity) * Math.exp(-(y - t) * config.recoveryRate);
+                        }
+                    }
+                    score -= penalty;
+                }
+                return Math.max(0, score); // Prevent negative consistency
+            }
+        }
 
-        function updateSlider() {
-            currentYears = parseInt(yearSlider.value);
-            yearLabel.innerText = currentYears;
+        function setTab(tab) {
+            document.querySelectorAll('#tabs button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            activeTab = tab;
+            drawChart();
+        }
+
+        function setScale(years) {
+            document.querySelectorAll('#scales button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            maxScale = years;
+            
+            // Adjust slider bounds dynamically
+            slider.max = maxScale;
+            slider.step = maxScale === 1 ? 0.01 : 0.1;
+            slider.value = maxScale; 
+            
             drawChart();
         }
 
         function drawChart() {
+            let currentY = parseFloat(slider.value);
+            timeLabel.innerText = currentY < 1 ? (currentY*12).toFixed(1) + "mo" : currentY.toFixed(1);
+            
+            const useSetbacks = toggle.checked;
+            
+            // Dynamic UI Text Update
+            let lbox = document.getElementById('lesson-box');
+            let setbackText = useSetbacks ? " <br><br><b>Notice:</b> Real life brought emergencies (dips in the green line), but because you didn't quit, you rapidly recovered." : "";
+            lbox.innerHTML = `<div class="scale-badge">${maxScale} Year View</div><br>${lessons[maxScale.toString()]}${setbackText}`;
+
+            // Canvas Setup
             const dpr = window.devicePixelRatio || 1;
             const rect = canvas.getBoundingClientRect();
             canvas.width = rect.width * dpr;
             canvas.height = rect.height * dpr;
             ctx.scale(dpr, dpr);
 
-            const w = rect.width;
-            const h = rect.height;
-            const padL = 35, padR = 20, padT = 20, padB = 30;
-            const graphW = w - padL - padR;
-            const graphH = h - padT - padB;
-
+            const w = rect.width, h = rect.height;
+            const padL = 40, padR = 20, padT = 30, padB = 30;
+            const gW = w - padL - padR, gH = h - padT - padB;
+            
             ctx.clearRect(0, 0, w, h);
 
-            // Establish "Zero Baseline" internally (3/4 down the graph to leave room for exponential peaks)
-            const zeroY = padT + (graphH * 0.75);
+            // Dynamic Zooming: Calculate max and min values based on the SELECTED SCALE
+            const maxCon = getScore(maxScale, 'con', false);
+            const maxY = Math.max(maxCon, config.spikeHeight) * 1.1; 
+            const minY = getScore(maxScale, 'dec', false) * 1.1;
+            const totalRange = maxY - minY;
+            const zeroY = padT + (maxY / totalRange) * gH;
 
-            // Draw Background Timeline Grid (Fixed to 50 years so the frame of reference never moves)
-            ctx.fillStyle = '#b5b4b0';
-            ctx.font = '10px -apple-system, sans-serif';
-            ctx.textAlign = 'center';
-            for (let y = 0; y <= MAX_YEARS; y += 10) {
-                let x = padL + (y / MAX_YEARS) * graphW;
-                ctx.fillText(y === 0 ? 'Start' : 'Yr ' + y, x, h - 10);
+            // Background Grid & Labels
+            ctx.fillStyle = '#a8a6a1'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
+            const steps = maxScale === 1 ? 12 : 5;
+            for (let i = 0; i <= steps; i++) {
+                let yVal = (i / steps) * maxScale;
+                let x = padL + (yVal / maxScale) * gW;
                 
-                // Light vertical guidelines
-                ctx.beginPath();
-                ctx.strokeStyle = 'rgba(0,0,0,0.03)';
-                ctx.lineWidth = 1;
-                ctx.moveTo(x, padT);
-                ctx.lineTo(x, h - padB);
-                ctx.stroke();
+                let label = maxScale === 1 ? (i===0?'Start':i+'m') : (i===0?'Start':yVal+'y');
+                ctx.fillText(label, x, h - 10);
+
+                ctx.beginPath(); ctx.strokeStyle = 'rgba(0,0,0,0.04)'; ctx.lineWidth = 1;
+                ctx.moveTo(x, padT); ctx.lineTo(x, h - padB); ctx.stroke();
             }
 
-            // Draw the absolute "Doing Nothing" / Zero Baseline Line
-            ctx.strokeStyle = '#d1d0cd';
-            ctx.lineWidth = 1.5;
-            ctx.setLineDash([4, 4]);
-            ctx.beginPath();
-            ctx.moveTo(padL, zeroY);
-            ctx.lineTo(padL + graphW, zeroY);
-            ctx.stroke();
+            // Zero Baseline
+            ctx.strokeStyle = '#c9c8c5'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 4]);
+            ctx.beginPath(); ctx.moveTo(padL, zeroY); ctx.lineTo(padL + gW, zeroY); ctx.stroke();
             ctx.setLineDash([]);
 
-            // Helper to get coordinates. 
-            // Max score is normalized to 100 up, 50 down
-            const getPoints = (mode) => {
+            // Rendering Engine
+            const drawLine = (mode, color, width) => {
                 let points = [];
-                // ONLY calculate up to the current selected year!
-                for (let y = 0; y <= currentYears; y += 0.2) {
-                    let score = dataConfig[activeTab].formula(y, mode);
-                    let x = padL + (y / MAX_YEARS) * graphW;
-                    let yPos = zeroY - (score / 100) * (graphH * 0.75); 
+                for (let y = 0; y <= currentY; y += (maxScale/200)) {
+                    let score = getScore(y, mode, useSetbacks);
+                    let x = padL + (y / maxScale) * gW;
+                    let yPos = zeroY - (score / totalRange) * gH;
                     points.push({x, y: yPos});
                 }
-                return points;
-            };
-
-            const drawPath = (points, color, width) => {
-                if(points.length === 0) return;
-                ctx.beginPath();
-                ctx.strokeStyle = color;
-                ctx.lineWidth = width;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
+                
+                if (points.length === 0) return;
+                
+                ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = width; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
                 ctx.moveTo(points[0].x, points[0].y);
-                for (let i = 1; i < points.length; i++) {
-                    ctx.lineTo(points[i].x, points[i].y);
-                }
+                for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
                 ctx.stroke();
 
-                // Draw a small dot at the leading edge to show "current point in time"
-                let lastPoint = points[points.length - 1];
-                ctx.beginPath();
-                ctx.fillStyle = color;
-                ctx.arc(lastPoint.x, lastPoint.y, width * 1.2, 0, Math.PI * 2);
-                ctx.fill();
+                // Leading Dot
+                let last = points[points.length - 1];
+                ctx.beginPath(); ctx.fillStyle = color;
+                ctx.arc(last.x, last.y, width * 1.5, 0, Math.PI * 2); ctx.fill();
             };
 
-            drawPath(getPoints('dec'), '#9e2a2b', 1.5);
-            drawPath(getPoints('int'), '#c96f53', 1.5);
-            drawPath(getPoints('con'), '#3b5943', 3.5); 
-
-            document.getElementById('lesson-box').innerText = dataConfig[activeTab].msg;
-        }
-
-        function switchTab(el, tabName) {
-            document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-            activeTab = tabName;
-            drawChart();
+            // Draw paths back-to-front
+            drawLine('dec', 'var(--decay)', 1.5);
+            drawLine('int', 'var(--intensity)', 2);
+            drawLine('con', 'var(--consistency)', 3.5);
         }
 
         window.addEventListener('resize', drawChart);
