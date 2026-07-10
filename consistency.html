@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consistency vs Intensity</title>
+    <style>
+        :root { --bg: #fdfbf7; --text: #4a4a4a; --primary: #8fbc8f; --accent: #db7093; --gray: #d3d3d3; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); max-width: 800px; margin: 0 auto; padding: 2rem; text-align: center; }
+        h1 { font-weight: 300; letter-spacing: -1px; margin-bottom: 0.5rem; }
+        p { font-weight: 300; color: #7a7a7a; margin-bottom: 2rem; }
+        .tabs { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; }
+        button { background: none; border: 1px solid var(--gray); padding: 0.5rem 1.5rem; border-radius: 20px; cursor: pointer; color: var(--text); transition: all 0.3s ease; font-size: 0.9rem; }
+        button.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+        .container { position: relative; width: 100%; height: 350px; margin-top: 1rem; }
+        canvas { width: 100%; height: 100%; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
+        .legend { display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; font-size: 0.85rem; font-weight: 300; }
+        .legend span::before { content: ''; display: inline-block; width: 12px; height: 12px; margin-right: 6px; border-radius: 50%; vertical-align: middle; }
+        .l-con::before { background: var(--primary); }
+        .l-int::before { background: var(--accent); }
+        .l-dec::before { background: var(--gray); }
+        #lesson { margin-top: 2rem; font-style: italic; min-height: 50px; color: #5a5a5a; font-size: 1.05rem; padding: 0 1rem; }
+    </style>
+</head>
+<body>
+
+    <h1>The Power of Small Steps</h1>
+    <p>See how daily habits shape your life over 365 days.</p>
+
+    <div class="tabs">
+        <button class="active" onclick="switchTab('health')">🌱 Health</button>
+        <button onclick="switchTab('money')">💰 Money</button>
+        <button onclick="switchTab('learning')">📚 Learning</button>
+        <button onclick="switchTab('relationships')">❤️ Relationships</button>
+    </div>
+
+    <div class="container">
+        <canvas id="chart"></canvas>
+    </div>
+
+    <div class="legend">
+        <span class="l-con"><b>Consistency</b> (Small daily steps)</span>
+        <span class="l-int"><b>Intensity</b> (Huge bursts, long breaks)</span>
+        <span class="l-dec"><b>Decay</b> (Doing nothing/Neglect)</span>
+    </div>
+
+    <div id="lesson"></div>
+
+    <script>
+        const themes = {
+            health: { lesson: "Consistency: Brushing teeth daily & brief walks builds a vibrant life. Intensity: Exhausting yourself at the gym once a month leaves you sore. Decay: Neglecting your body causes a slow slide downward.", formula: (t, mode) => mode === 'con' ? 50 + t * 0.4 : mode === 'int' ? 50 + (Math.sin(t/10) > 0.9 ? 35 : 0) + (t*0.05) : 50 - t * 0.12 },
+            money: { lesson: "Consistency: Saving a single coin every single day compounds into freedom. Intensity: Buying an expensive lottery ticket or investment hype rarely pays off. Decay: Spending small amounts thoughtlessly drains your savings.", formula: (t, mode) => mode === 'con' ? 30 * Math.pow(1.005, t) : mode === 'int' ? (t < 150 ? 30 : t < 300 ? 90 : 40) : 30 * Math.pow(0.996, t) },
+            learning: { lesson: "Consistency: Reading 10 pages a day makes you an expert over time. Intensity: Cramming the entire night before an exam means you forget it all next week. Decay: Letting your mind rust causes your knowledge to fade.", formula: (t, mode) => mode === 'con' ? 20 + t * 0.45 : mode === 'int' ? (Math.floor(t/60) % 2 === 0 ? 40 : 20) + (t*0.05) : 20 / (1 + t*0.01) },
+            relationships: { lesson: "Consistency: Saying 'I love you' or helping daily builds unbreakable trust. Intensity: Giving one giant apology gift after months of ignoring someone feels empty. Decay: Forgetting to check in slowly drifts people apart.", formula: (t, mode) => mode === 'con' ? 60 + t * 0.35 : mode === 'int' ? 60 + (t % 90 < 5 ? 30 : -5) : 60 - t * 0.15 }
+        };
+
+        let currentTab = 'health';
+        const canvas = document.getElementById('chart');
+        const ctx = canvas.getContext('2d');
+
+        function resize() {
+            canvas.width = canvas.parentElement.clientWidth * window.devicePixelRatio;
+            canvas.height = canvas.parentElement.clientHeight * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+            draw();
+        }
+
+        function draw() {
+            const w = canvas.width / window.devicePixelRatio;
+            const h = canvas.height / window.devicePixelRatio;
+            ctx.clearRect(0, 0, w, h);
+            document.getElementById('lesson').innerText = themes[currentTab].lesson;
+
+            // Draw axis lines
+            ctx.strokeStyle = '#eaeaea'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(40, h - 30); ctx.lineTo(w - 20, h - 30); ctx.stroke();
+
+            const drawPath = (mode, color) => {
+                ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = mode === 'con' ? 3.5 : 2;
+                for (let t = 0; t <= 365; t++) {
+                    let val = themes[currentTab].formula(t, mode);
+                    let x = 40 + (t / 365) * (w - 60);
+                    let y = (h - 30) - (val / 150) * (h - 50); // scales values to frame
+                    if (t === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            };
+
+            drawPath('dec', '#c0c0c0');
+            drawPath('int', '#db7093');
+            drawPath('con', '#8fbc8f');
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            currentTab = tab;
+            draw();
+        }
+
+        window.addEventListener('resize', resize);
+        setTimeout(resize, 100);
+    </script>
+</body>
+</html>
