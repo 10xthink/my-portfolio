@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Shadow Lab | The People Pleaser</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Arial,Helvetica,sans-serif;
+background:linear-gradient(180deg,#0b1020,#111827);
+color:white;
+height:100vh;
+overflow:hidden;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.container{
+width:90%;
+max-width:900px;
+text-align:center;
+}
+
+.card{
+background:rgba(255,255,255,.06);
+padding:40px;
+border-radius:20px;
+backdrop-filter:blur(10px);
+box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+
+h1{
+font-size:42px;
+margin-bottom:20px;
+}
+
+h2{
+margin-bottom:20px;
+}
+
+p{
+font-size:20px;
+line-height:1.6;
+margin-bottom:25px;
+}
+
+button{
+padding:15px 35px;
+margin:10px;
+font-size:18px;
+border:none;
+border-radius:40px;
+cursor:pointer;
+transition:.3s;
+}
+
+button:hover{
+transform:scale(1.05);
+}
+
+.yes{
+background:#ef4444;
+color:white;
+}
+
+.no{
+background:#22c55e;
+color:white;
+}
+
+.primary{
+background:#3b82f6;
+color:white;
+}
+
+#orb{
+
+width:180px;
+height:180px;
+border-radius:50%;
+margin:30px auto;
+
+background:radial-gradient(circle,#ffffff,#60a5fa);
+
+box-shadow:
+0 0 20px #60a5fa,
+0 0 50px #60a5fa,
+0 0 90px #60a5fa;
+
+transition:all .8s;
+}
+
+.fade{
+animation:fade .6s;
+}
+
+@keyframes fade{
+
+from{
+opacity:0;
+transform:translateY(15px);
+}
+
+to{
+opacity:1;
+transform:translateY(0px);
+}
+
+}
+
+textarea{
+
+width:100%;
+height:120px;
+
+background:#1f2937;
+color:white;
+
+border:none;
+border-radius:10px;
+
+padding:15px;
+
+font-size:16px;
+
+margin-top:10px;
+
+}
+
+.small{
+font-size:15px;
+opacity:.75;
+margin-top:25px;
+}
+
+.hidden{
+display:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card fade">
+
+<div id="content">
+
+<h1>The Weight of Yes</h1>
+
+<div id="orb"></div>
+
+<p id="text">
+
+How many times have you said
+<b>"Yes"</b>
+
+while quietly wishing
+you had said
+
+<b>"No"</b>?
+
+</p>
+
+<button class="primary" onclick="start()">
+
+Begin
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const requests=[
+
+"Can you stay late again?",
+
+"Can you answer emails tonight?",
+
+"Can you cancel your plans for me?",
+
+"Can you lend me money?",
+
+"Can you solve my problem?",
+
+"Can you always be available?",
+
+"Can you become who I need you to be?"
+
+];
+
+let index=0;
+
+let yes=0;
+
+let no=0;
+
+let size=180;
+
+function start(){
+
+showQuestion();
+
+}
+
+function showQuestion(){
+
+document.getElementById("content").innerHTML=
+
+`
+
+<h2>Request ${index+1} of ${requests.length}</h2>
+
+<div id="orb"
+style="width:${size}px;height:${size}px;"></div>
+
+<p>${requests[index]}</p>
+
+<button class="yes"
+onclick="chooseYes()">
+
+YES
+
+</button>
+
+<button class="no"
+onclick="chooseNo()">
+
+NO
+
+</button>
+
+`;
+
+}
+
+function chooseYes(){
+
+yes++;
+
+size=Math.max(70,size-18);
+
+next("You helped someone.<br><br><b>But ignored yourself.</b>");
+
+}
+
+function chooseNo(){
+
+no++;
+
+size=Math.min(220,size+15);
+
+next("You respected your limits.<br><br><b>The world didn't end.</b>");
+
+}
+
+function next(message){
+
+document.getElementById("content").innerHTML=
+
+`
+
+<div id="orb"
+style="width:${size}px;height:${size}px;"></div>
+
+<p>${message}</p>
+
+<button class="primary"
+onclick="continueStory()">
+
+Continue
+
+</button>
+
+`;
+
+}
+
+function continueStory(){
+
+index++;
+
+if(index<requests.length){
+
+showQuestion();
+
+}
+
+else{
+
+finish();
+
+}
+
+}
+
+function finish(){
+
+document.getElementById("content").innerHTML=
+
+`
+
+<h2>Reflection</h2>
+
+<div id="orb"
+style="width:${size}px;height:${size}px;"></div>
+
+<p>
+
+You answered
+
+<b>${yes}</b> YES
+
+and
+
+<b>${no}</b> NO.
+
+<br><br>
+
+Neither answer is right.
+
+Every Yes creates connection.
+
+Every No creates identity.
+
+Shadow integration begins
+
+when both become conscious choices.
+
+</p>
+
+<p>
+
+When was your last automatic YES?
+
+</p>
+
+<textarea></textarea>
+
+<p>
+
+What were you afraid would happen
+if you had said NO?
+
+</p>
+
+<textarea></textarea>
+
+<p>
+
+What boundary deserves your attention
+this week?
+
+</p>
+
+<textarea></textarea>
+
+<p class="small">
+
+Compassion for others
+
+does not require abandoning yourself.
+
+<br><br>
+
+Inspired by Carl Jung's idea of integrating
+the parts of ourselves we often hide.
+
+</p>
+
+<button class="primary"
+onclick="restart()">
+
+Start Again
+
+</button>
+
+`;
+
+}
+
+function restart(){
+
+index=0;
+
+yes=0;
+
+no=0;
+
+size=180;
+
+location.reload();
+
+}
+
+</script>
+
+</body>
+</html>
