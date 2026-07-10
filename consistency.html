@@ -3,103 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consistency vs Intensity</title>
+    <title>The Geometry of Habits</title>
     <style>
-        :root { --bg: #fdfbf7; --text: #4a4a4a; --primary: #8fbc8f; --accent: #db7093; --gray: #d3d3d3; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); max-width: 800px; margin: 0 auto; padding: 2rem; text-align: center; }
-        h1 { font-weight: 300; letter-spacing: -1px; margin-bottom: 0.5rem; }
-        p { font-weight: 300; color: #7a7a7a; margin-bottom: 2rem; }
-        .tabs { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; }
-        button { background: none; border: 1px solid var(--gray); padding: 0.5rem 1.5rem; border-radius: 20px; cursor: pointer; color: var(--text); transition: all 0.3s ease; font-size: 0.9rem; }
-        button.active { background: var(--text); color: var(--bg); border-color: var(--text); }
-        .container { position: relative; width: 100%; height: 350px; margin-top: 1rem; }
-        canvas { width: 100%; height: 100%; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
-        .legend { display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; font-size: 0.85rem; font-weight: 300; }
-        .legend span::before { content: ''; display: inline-block; width: 12px; height: 12px; margin-right: 6px; border-radius: 50%; vertical-align: middle; }
-        .l-con::before { background: var(--primary); }
-        .l-int::before { background: var(--accent); }
-        .l-dec::before { background: var(--gray); }
-        #lesson { margin-top: 2rem; font-style: italic; min-height: 50px; color: #5a5a5a; font-size: 1.05rem; padding: 0 1rem; }
+        :root {
+            --bg: #f9f8f6;
+            --surface: #ffffff;
+            --text-main: #1c1c1c;
+            --text-muted: #706f6c;
+            --border: #eae9e6;
+            
+            /* Premium Zen Palette */
+            --consistency: #4a6b52; /* Deep Sage */
+            --intensity: #c27d66;   /* Terracotta */
+            --decay: #a8a7a4;       /* Warm Gray */
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 720px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 400;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+
+        /* Premium Minimal Pill Selector */
+        .tabs {
+            display: inline-flex;
+            background: rgba(0, 0, 0, 0.03);
+            padding: 4px;
+            border-radius: 99px;
+            margin: 0 auto 2.5rem auto;
+            display: flex;
+            width: max-content;
+        }
+
+        .tabs button {
+            background: transparent;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            border-radius: 99px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tabs button:hover {
+            color: var(--text-main);
+        }
+
+        .tabs button.active {
+            background: var(--surface);
+            color: var(--text-main);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Canvas Card Box */
+        .canvas-card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.015);
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 320px;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* High-readability Info Architecture */
+        .legend {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .legend-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            width: 30%;
+        }
+
+        .legend-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-label::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .con-label { color: var(--consistency); }
+        .con-label::before { background: var(--consistency); }
+        .int-label { color: var(--intensity); }
+        .int-label::before { background: var(--intensity); }
+        .dec-label { color: var(--decay); }
+        .dec-label::before { background: var(--decay); }
+
+        .legend-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            font-weight: 300;
+        }
+
+        /* Bottom Narrative */
+        #lesson-box {
+            text-align: center;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-main);
+            font-weight: 300;
+            padding: 0 1rem;
+            min-height: 60px;
+            transition: opacity 0.3s ease;
+        }
     </style>
 </head>
 <body>
 
-    <h1>The Power of Small Steps</h1>
-    <p>See how daily habits shape your life over 365 days.</p>
+    <div class="wrapper">
+        <header>
+            <h1>The Geometry of Habits</h1>
+            <p class="subtitle">A visual look at time, effort, and choices.</p>
+        </header>
 
-    <div class="tabs">
-        <button class="active" onclick="switchTab('health')">🌱 Health</button>
-        <button onclick="switchTab('money')">💰 Money</button>
-        <button onclick="switchTab('learning')">📚 Learning</button>
-        <button onclick="switchTab('relationships')">❤️ Relationships</button>
+        <div class="tabs">
+            <button class="active" onclick="switchTab(this, 'health')">Health</button>
+            <button onclick="switchTab(this, 'money')">Money</button>
+            <button onclick="switchTab(this, 'learning')">Learning</button>
+            <button onclick="switchTab(this, 'relationships')">Connection</button>
+        </div>
+
+        <div class="canvas-card">
+            <div class="canvas-container">
+                <canvas id="habitChart"></canvas>
+            </div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <span class="legend-label con-label">Consistency</span>
+                    <span class="legend-desc">Small daily efforts that compound quietly over time.</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-label int-label">Intensity</span>
+                    <span class="legend-desc">Massive bursts of energy followed by long pauses.</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-label dec-label">Decay</span>
+                    <span class="legend-desc">The slow, unnoticeable toll of neglect or inaction.</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="lesson-box"></div>
     </div>
-
-    <div class="container">
-        <canvas id="chart"></canvas>
-    </div>
-
-    <div class="legend">
-        <span class="l-con"><b>Consistency</b> (Small daily steps)</span>
-        <span class="l-int"><b>Intensity</b> (Huge bursts, long breaks)</span>
-        <span class="l-dec"><b>Decay</b> (Doing nothing/Neglect)</span>
-    </div>
-
-    <div id="lesson"></div>
 
     <script>
-        const themes = {
-            health: { lesson: "Consistency: Brushing teeth daily & brief walks builds a vibrant life. Intensity: Exhausting yourself at the gym once a month leaves you sore. Decay: Neglecting your body causes a slow slide downward.", formula: (t, mode) => mode === 'con' ? 50 + t * 0.4 : mode === 'int' ? 50 + (Math.sin(t/10) > 0.9 ? 35 : 0) + (t*0.05) : 50 - t * 0.12 },
-            money: { lesson: "Consistency: Saving a single coin every single day compounds into freedom. Intensity: Buying an expensive lottery ticket or investment hype rarely pays off. Decay: Spending small amounts thoughtlessly drains your savings.", formula: (t, mode) => mode === 'con' ? 30 * Math.pow(1.005, t) : mode === 'int' ? (t < 150 ? 30 : t < 300 ? 90 : 40) : 30 * Math.pow(0.996, t) },
-            learning: { lesson: "Consistency: Reading 10 pages a day makes you an expert over time. Intensity: Cramming the entire night before an exam means you forget it all next week. Decay: Letting your mind rust causes your knowledge to fade.", formula: (t, mode) => mode === 'con' ? 20 + t * 0.45 : mode === 'int' ? (Math.floor(t/60) % 2 === 0 ? 40 : 20) + (t*0.05) : 20 / (1 + t*0.01) },
-            relationships: { lesson: "Consistency: Saying 'I love you' or helping daily builds unbreakable trust. Intensity: Giving one giant apology gift after months of ignoring someone feels empty. Decay: Forgetting to check in slowly drifts people apart.", formula: (t, mode) => mode === 'con' ? 60 + t * 0.35 : mode === 'int' ? 60 + (t % 90 < 5 ? 30 : -5) : 60 - t * 0.15 }
+        const dataConfig = {
+            health: {
+                msg: "“Eating well and moving lightly every day builds a vibrant engine. Drastic weekend-only workouts cause injury, while complete neglect slowly saps your daily energy.”",
+                formula: (t, m) => m === 'con' ? 60 + t * 0.4 : m === 'int' ? 60 + (Math.sin(t/8) > 0.85 ? 40 : 0) + (t * 0.04) : 60 - t * 0.15
+            },
+            money: {
+                msg: "“Saving small amounts continuously lets compound growth work its magic. Chasing trendy, overnight financial wins usually crashes, while unthinking spending drains wealth entirely.”",
+                formula: (t, m) => m === 'con' ? 35 * Math.pow(1.0045, t) : m === 'int' ? (t < 120 ? 35 : t < 260 ? 110 : 45) : 35 * Math.pow(0.995, t)
+            },
+            learning: {
+                msg: "“Devoting fifteen minutes a day to a skill yields true mastery. Cramming aggressively for hours before a deadline results in quick forgetting, while ignoring curiosity dulls the mind.”",
+                formula: (t, m) => m === 'con' ? 30 + t * 0.45 : m === 'int' ? (Math.floor(t/45) % 2 === 0 ? 65 : 30) + (t * 0.05) : 30 / (1 + t * 0.012)
+            },
+            relationships: {
+                msg: "“Showing small, deliberate acts of kindness retains flawless trust. Throwing massive apology gifts after weeks of silence feels hollow, while taking others for granted causes slow drift.”",
+                formula: (t, m) => m === 'con' ? 70 + t * 0.32 : m === 'int' ? 70 + (t % 90 < 6 ? 40 : -8) : 70 - t * 0.2
+            }
         };
 
-        let currentTab = 'health';
-        const canvas = document.getElementById('chart');
+        let activeTab = 'health';
+        const canvas = document.getElementById('habitChart');
         const ctx = canvas.getContext('2d');
+        const colors = { con: '#4a6b52', int: '#c27d66', dec: '#a8a7a4' };
 
-        function resize() {
-            canvas.width = canvas.parentElement.clientWidth * window.devicePixelRatio;
-            canvas.height = canvas.parentElement.clientHeight * window.devicePixelRatio;
-            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-            draw();
-        }
+        function drawChart() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
 
-        function draw() {
-            const w = canvas.width / window.devicePixelRatio;
-            const h = canvas.height / window.devicePixelRatio;
+            const w = rect.width;
+            const h = rect.height;
+            const paddingLeft = 15;
+            const paddingBottom = 20;
+            const graphW = w - paddingLeft * 2;
+            const graphH = h - paddingBottom * 2;
+
             ctx.clearRect(0, 0, w, h);
-            document.getElementById('lesson').innerText = themes[currentTab].lesson;
 
-            // Draw axis lines
-            ctx.strokeStyle = '#eaeaea'; ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.moveTo(40, h - 30); ctx.lineTo(w - 20, h - 30); ctx.stroke();
+            // X-Axis Baseline
+            ctx.strokeStyle = '#eae9e6';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(paddingLeft, h - paddingBottom);
+            ctx.lineTo(w - paddingLeft, h - paddingBottom);
+            ctx.stroke();
 
-            const drawPath = (mode, color) => {
-                ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = mode === 'con' ? 3.5 : 2;
+            // Render Paths
+            const plot = (mode, width) => {
+                ctx.beginPath();
+                ctx.strokeStyle = colors[mode];
+                ctx.lineWidth = width;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+
                 for (let t = 0; t <= 365; t++) {
-                    let val = themes[currentTab].formula(t, mode);
-                    let x = 40 + (t / 365) * (w - 60);
-                    let y = (h - 30) - (val / 150) * (h - 50); // scales values to frame
+                    let val = dataConfig[activeTab].formula(t, mode);
+                    let x = paddingLeft + (t / 365) * graphW;
+                    // Maps scale boundary comfortably into card limits
+                    let y = (h - paddingBottom) - (val / 160) * graphH; 
+
                     if (t === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
                 }
                 ctx.stroke();
             };
 
-            drawPath('dec', '#c0c0c0');
-            drawPath('int', '#db7093');
-            drawPath('con', '#8fbc8f');
+            plot('dec', 1.5);
+            plot('int', 1.5);
+            plot('con', 3.5); // Highlight consistency with subtle thickness superiority
+
+            // Fade-in text narrative update
+            const lessonBox = document.getElementById('lesson-box');
+            lessonBox.innerText = dataConfig[activeTab].msg;
         }
 
-        function switchTab(tab) {
+        function switchTab(el, tabName) {
             document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
-            currentTab = tab;
-            draw();
+            el.classList.add('active');
+            activeTab = tabName;
+            drawChart();
         }
 
-        window.addEventListener('resize', resize);
-        setTimeout(resize, 100);
+        window.addEventListener('resize', drawChart);
+        // Clean initialization entry
+        setTimeout(drawChart, 50);
     </script>
 </body>
 </html>
